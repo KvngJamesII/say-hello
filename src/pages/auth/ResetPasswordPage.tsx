@@ -1,45 +1,47 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation } from 'wouter';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Lock, Eye, EyeOff, CheckCircle, RefreshCw } from 'lucide-react';
+import { Lock, Eye, EyeOff, CheckCircle2, RefreshCw, ArrowLeft } from 'lucide-react';
+import { Link, useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Logo } from '@/components/ui/Logo';
 import { useToast } from '@/hooks/use-toast';
-import api from '@/lib/api';
 import { cn } from '@/lib/utils';
-import { Link } from 'wouter';
+import api from '@/lib/api';
+
+const D = 'var(--app-font-display)';
 
 const ResetPasswordPage: React.FC = () => {
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+  const [pw, setPw] = useState('');
+  const [confirm, setConfirm] = useState('');
+  const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [passwordStrength, setPasswordStrength] = useState(0);
+  const [strength, setStrength] = useState(0);
   const { success, error } = useToast();
   const [, setLocation] = useLocation();
-  
+
   const token = new URLSearchParams(window.location.search).get('token');
 
   useEffect(() => {
-    let strength = 0;
-    if (password.length >= 8) strength++;
-    if (/[A-Z]/.test(password)) strength++;
-    if (/[0-9]/.test(password)) strength++;
-    if (/[^A-Za-z0-9]/.test(password)) strength++;
-    setPasswordStrength(strength);
-  }, [password]);
+    let s = 0;
+    if (pw.length >= 8) s++;
+    if (/[A-Z]/.test(pw)) s++;
+    if (/[0-9]/.test(pw)) s++;
+    if (/[^A-Za-z0-9]/.test(pw)) s++;
+    setStrength(s);
+  }, [pw]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password !== confirmPassword || passwordStrength < 2 || !token) return;
+    if (pw !== confirm || strength < 2 || !token) return;
     setLoading(true);
     try {
-      await api.post('/auth/reset-password', { token, password });
-      success('Password reset!', 'You can now login with your new password.');
+      await api.post('/auth/reset-password', { token, password: pw });
+      success('Password reset', 'Sign in with your new password.');
       setLocation('/login');
     } catch (err: any) {
-      error('Reset failed', err.response?.data?.message || 'Token may be expired or invalid.');
+      error('Failed', err.response?.data?.message || 'Token may be invalid or expired.');
     } finally {
       setLoading(false);
     }
@@ -47,97 +49,114 @@ const ResetPasswordPage: React.FC = () => {
 
   if (!token) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[--bg-primary]">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-white mb-4">Invalid Reset Token</h1>
-          <Link href="/login"><Button>Back to Login</Button></Link>
-        </div>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[--bg-primary] px-6 text-center">
+        <h1 className="text-2xl font-bold text-white mb-2">Invalid reset token</h1>
+        <p className="text-sm text-[--text-secondary] mb-6">This password reset link is missing or invalid.</p>
+        <Link href="/login"><Button style={{ background: 'var(--accent-primary)' }} className="text-white">Back to login</Button></Link>
       </div>
     );
   }
 
+  const segColors = ['bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-green-500'];
+  const labels = ['Weak', 'Fair', 'Good', 'Strong'];
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[--bg-primary] px-6">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="max-w-md w-full"
-      >
-        <div className="text-center mb-10">
-          <h1 className="text-3xl font-black text-white mb-2">New Password</h1>
-          <p className="text-[--text-secondary]">Create a strong password to secure your account.</p>
-        </div>
+    <div className="min-h-screen flex flex-col bg-[--bg-primary]" style={{ fontFamily: 'var(--app-font-sans)' }}>
+      <header className="h-16 px-6 flex items-center">
+        <Link href="/"><Logo className="cursor-pointer" /></Link>
+      </header>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-[--text-muted]" size={18} />
-              <Input
-                id="password"
-                type={showPassword ? 'text' : 'password'}
-                placeholder="••••••••"
-                className="pl-10 pr-10 h-12 bg-[--bg-secondary] border-[--border] text-white focus:border-[--accent-primary] transition-all"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-[--text-muted] hover:text-white"
-              >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
-            </div>
-            
-            <div className="flex gap-1 mt-2">
-              {[1, 2, 3, 4].map((i) => (
-                <div
-                  key={i}
-                  className={cn(
-                    "h-1 flex-1 rounded-full transition-all",
-                    passwordStrength >= i 
-                      ? i === 1 ? 'bg-red-500' : i === 2 ? 'bg-orange-500' : i === 3 ? 'bg-yellow-500' : 'bg-green-500'
-                      : 'bg-[--bg-tertiary]'
-                  )}
-                />
-              ))}
-            </div>
-          </div>
+      <main className="flex-1 flex items-center justify-center px-6 py-10">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="w-full max-w-[420px]"
+        >
+          <div className="rounded-2xl bg-[--bg-secondary] border border-[--border] p-8 sm:p-10">
+            <h1 className="text-2xl font-bold text-white tracking-tight mb-2" style={{ fontFamily: D }}>
+              Set a new password
+            </h1>
+            <p className="text-sm text-[--text-secondary] mb-7">Choose a strong password you haven't used before.</p>
 
-          <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Confirm Password</Label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-[--text-muted]" size={18} />
-              <Input
-                id="confirmPassword"
-                type={showPassword ? 'text' : 'password'}
-                placeholder="••••••••"
-                className={cn(
-                  "pl-10 h-12 bg-[--bg-secondary] border-[--border] text-white focus:border-[--accent-primary] transition-all",
-                  confirmPassword && password === confirmPassword && "border-green-500/50"
+            <form onSubmit={submit} className="space-y-5">
+              <div className="space-y-1.5">
+                <Label htmlFor="pw" className="text-[11px] font-bold uppercase tracking-wider text-[--text-muted]">
+                  New password
+                </Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-[--text-muted]" size={15} />
+                  <Input
+                    id="pw"
+                    type={show ? 'text' : 'password'}
+                    placeholder="••••••••"
+                    value={pw}
+                    onChange={(e) => setPw(e.target.value)}
+                    required
+                    className="pl-9 pr-10 h-11 bg-[--bg-tertiary] border-[--border] text-white text-sm rounded-lg"
+                  />
+                  <button type="button" onClick={() => setShow(s => !s)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[--text-muted] hover:text-white">
+                    {show ? <EyeOff size={15} /> : <Eye size={15} />}
+                  </button>
+                </div>
+                <div className="flex gap-1 mt-2">
+                  {[1, 2, 3, 4].map(i => (
+                    <div key={i} className={cn(
+                      'h-1 flex-1 rounded-full transition-all',
+                      strength >= i ? segColors[strength - 1] : 'bg-[--border]'
+                    )} />
+                  ))}
+                </div>
+                {pw && (
+                  <p className="text-[11px] text-[--text-muted] mt-1">
+                    Strength: <span className="font-semibold text-white">{labels[Math.max(0, strength - 1)]}</span>
+                  </p>
                 )}
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-              />
-              {confirmPassword && password === confirmPassword && (
-                <CheckCircle className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500" size={18} />
-              )}
-            </div>
-          </div>
+              </div>
 
-          <Button
-            type="submit"
-            disabled={loading || password !== confirmPassword || passwordStrength < 2}
-            className="w-full h-12 bg-[--accent-primary] hover:bg-[--accent-hover] text-white font-bold transition-all shadow-lg shadow-[--accent-primary]/20"
-          >
-            {loading ? <RefreshCw className="animate-spin mr-2" /> : null}
-            Reset Password
-          </Button>
-        </form>
-      </motion.div>
+              <div className="space-y-1.5">
+                <Label htmlFor="confirm" className="text-[11px] font-bold uppercase tracking-wider text-[--text-muted]">
+                  Confirm password
+                </Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-[--text-muted]" size={15} />
+                  <Input
+                    id="confirm"
+                    type={show ? 'text' : 'password'}
+                    placeholder="••••••••"
+                    value={confirm}
+                    onChange={(e) => setConfirm(e.target.value)}
+                    required
+                    className={cn(
+                      'pl-9 h-11 bg-[--bg-tertiary] border-[--border] text-white text-sm rounded-lg',
+                      confirm && pw === confirm && 'border-green-500/40'
+                    )}
+                  />
+                  {confirm && pw === confirm && (
+                    <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500" size={15} />
+                  )}
+                </div>
+              </div>
+
+              <Button
+                type="submit"
+                disabled={loading || pw !== confirm || strength < 2}
+                className="w-full h-11 font-semibold text-white text-sm"
+                style={{ background: 'var(--accent-primary)' }}
+              >
+                {loading ? <><RefreshCw size={14} className="animate-spin mr-2" /> Saving…</> : 'Reset password'}
+              </Button>
+            </form>
+
+            <Link href="/login">
+              <span className="flex items-center justify-center gap-1.5 text-[--text-muted] text-xs font-medium hover:text-white cursor-pointer mt-6 transition-colors">
+                <ArrowLeft size={13} /> Back to login
+              </span>
+            </Link>
+          </div>
+        </motion.div>
+      </main>
     </div>
   );
 };
