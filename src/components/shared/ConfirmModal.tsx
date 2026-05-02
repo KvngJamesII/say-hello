@@ -1,18 +1,15 @@
 import React from 'react';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
+  Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { motion, AnimatePresence } from 'framer-motion';
 
 interface ConfirmModalProps {
-  isOpen: boolean;
-  onClose: () => void;
+  /** Optional — if omitted, the modal is treated as always open (controlled by parent rendering). */
+  isOpen?: boolean;
+  onClose?: () => void;
+  /** Alternate close handler used by some legacy callers. */
+  onCancel?: () => void;
   onConfirm: () => void;
   title: string;
   message: string;
@@ -25,6 +22,7 @@ interface ConfirmModalProps {
 export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   isOpen,
   onClose,
+  onCancel,
   onConfirm,
   title,
   message,
@@ -33,46 +31,46 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   confirmVariant = 'default',
   isLoading = false,
 }) => {
+  const handleClose = () => {
+    onClose?.();
+    onCancel?.();
+  };
+  // If neither isOpen nor isOpen=false is provided, treat as open
+  const open = isOpen === undefined ? true : isOpen;
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <AnimatePresence>
-        {isOpen && (
-          <DialogContent className="sm:max-w-[425px] bg-[--bg-secondary] border-[--border] p-0 overflow-hidden">
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="p-6"
-            >
-              <DialogHeader>
-                <DialogTitle className="text-[--text-primary]">{title}</DialogTitle>
-                <DialogDescription className="text-[--text-secondary] pt-2">
-                  {message}
-                </DialogDescription>
-              </DialogHeader>
-              <DialogFooter className="mt-6 gap-2">
-                <Button
-                  variant="outline"
-                  onClick={onClose}
-                  disabled={isLoading}
-                  className="bg-transparent border-[--border] text-[--text-primary]"
-                >
-                  {cancelText}
-                </Button>
-                <Button
-                  variant={confirmVariant}
-                  onClick={onConfirm}
-                  disabled={isLoading}
-                  className={confirmVariant === 'default' ? 'bg-[--accent-primary]' : ''}
-                >
-                  {isLoading ? 'Processing...' : confirmText}
-                </Button>
-              </DialogFooter>
-            </motion.div>
-          </DialogContent>
-        )}
-      </AnimatePresence>
+    <Dialog open={open} onOpenChange={(v) => !v && handleClose()}>
+      <DialogContent className="sm:max-w-[440px] bg-[--bg-elevated] border-[--border] text-[--text-primary]">
+        <DialogHeader>
+          <DialogTitle className="text-white text-lg font-semibold">{title}</DialogTitle>
+          <DialogDescription className="text-[--text-secondary] pt-2 leading-relaxed">
+            {message}
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter className="mt-4 gap-2 sm:gap-2">
+          <Button
+            variant="outline"
+            onClick={handleClose}
+            disabled={isLoading}
+            className="bg-transparent border-[--border] text-[--text-secondary] hover:bg-white/[0.04] hover:text-white"
+          >
+            {cancelText}
+          </Button>
+          <Button
+            variant={confirmVariant}
+            onClick={onConfirm}
+            disabled={isLoading}
+            className={
+              confirmVariant === 'destructive'
+                ? 'bg-[--danger] hover:bg-[--danger]/90 text-white'
+                : 'text-white'
+            }
+            style={confirmVariant === 'default' ? { background: 'var(--accent-primary)' } : {}}
+          >
+            {isLoading ? 'Processing…' : confirmText}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
     </Dialog>
   );
 };
