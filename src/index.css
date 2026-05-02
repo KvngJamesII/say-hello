@@ -104,24 +104,31 @@
   --chart-4: 0 84% 60%;
   --chart-5: 199 89% 48%;
 
-  /* Custom Redon3 tokens */
+  /* Custom Redon3 tokens — Refined Dark (Linear/Vercel) */
   --accent-primary: #F97316;
   --accent-hover: #EA6C10;
   --accent-glow: rgba(249, 115, 22, 0.15);
+  --accent-soft: rgba(249, 115, 22, 0.08);
   --accent-gradient: linear-gradient(135deg, #F97316 0%, #FB923C 100%);
   --accent-gradient-subtle: linear-gradient(135deg, rgba(249,115,22,0.12) 0%, rgba(251,146,60,0.05) 100%);
   --success: #22C55E;
   --warning: #EAB308;
   --danger: #EF4444;
   --cyan: #22D3EE;
+  --info: #3B82F6;
   --text-primary: #F8FAFC;
   --text-secondary: #94A3B8;
   --text-muted: #64748B;
+  --text-faint: #475569;
   --bg-primary: #08090D;
   --bg-secondary: #0E1117;
   --bg-tertiary: #161B24;
+  --bg-elevated: #1A2030;
   --bg-card: #111520;
   --border: #1E2533;
+  --border-strong: #2A3142;
+  --border-subtle: rgba(255,255,255,0.05);
+  --hairline: rgba(255,255,255,0.06);
 
   --app-font-sans: 'Plus Jakarta Sans', sans-serif;
   --app-font-display: 'Plus Jakarta Sans', sans-serif;
