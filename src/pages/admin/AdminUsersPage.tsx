@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { PageHeader } from '@/components/shared/PageHeader';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ConfirmModal } from '@/components/shared/ConfirmModal';
@@ -67,24 +68,23 @@ export const AdminUsersPage: React.FC = () => {
 
   return (
     <DashboardLayout>
-      <div className="flex flex-col gap-8">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-black text-white">Users</h1>
-            <p className="text-[--text-secondary] font-medium mt-1">Manage all registered accounts</p>
-          </div>
+      <PageHeader
+        title="Users"
+        description="Manage all registered accounts."
+        actions={
           <div className="relative w-full sm:w-72">
-            <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[--text-muted]" />
+            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[--text-muted]" />
             <Input
               value={search}
               onChange={e => { setSearch(e.target.value); setPage(1); }}
               placeholder="Search by email..."
-              className="pl-10 h-11 bg-[--bg-secondary] border-[--border] text-white placeholder:text-[--text-muted]"
+              className="pl-9 h-10 bg-[--bg-secondary] border-[--border] text-white placeholder:text-[--text-muted]"
             />
           </div>
-        </div>
-
-        <div className="bg-[--bg-secondary] rounded-2xl border border-[--border] overflow-hidden">
+        }
+      />
+      <div className="flex flex-col gap-6">
+        <div className="bg-[--bg-secondary] rounded-xl border border-[--border] overflow-hidden">
           {/* Desktop table */}
           <div className="hidden md:grid grid-cols-[1.5fr_1.5fr_80px_70px_110px_160px] gap-4 px-6 py-3 border-b border-[--border]">
             {['Name', 'Email', 'Role', 'Bots', 'Status', 'Actions'].map(h => (

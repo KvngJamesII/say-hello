@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { PageHeader } from '@/components/shared/PageHeader';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { EmptyState } from '@/components/shared/EmptyState';
@@ -120,16 +121,16 @@ export const AdminTrialCodesPage: React.FC = () => {
 
   return (
     <DashboardLayout>
-      <div className="flex flex-col gap-8">
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-black text-white">Trial Codes</h1>
-            <p className="text-[--text-secondary] font-medium mt-1">Generate private invite codes for beta testers</p>
-          </div>
-          <Button onClick={() => setShowCreate(true)} className="h-11 px-6 text-white font-bold gap-2" style={{ background: '#F97316' }}>
-            <Plus size={18} />New Code
+      <PageHeader
+        title="Trial Codes"
+        description="Generate private invite codes for beta testers."
+        actions={
+          <Button onClick={() => setShowCreate(true)} className="h-10 px-4 text-white font-bold gap-2" style={{ background: '#F97316' }}>
+            <Plus size={16} />New Code
           </Button>
-        </div>
+        }
+      />
+      <div className="flex flex-col gap-6">
 
         {isLoading ? (
           <div className="flex items-center justify-center py-20"><Loader2 size={28} className="animate-spin text-[--text-muted]" /></div>

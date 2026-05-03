@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { PageHeader } from '@/components/shared/PageHeader';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import api from '@/lib/api';
@@ -53,11 +54,8 @@ export const AdminBroadcastPage: React.FC = () => {
 
   return (
     <DashboardLayout>
-      <div className="flex flex-col gap-8">
-        <div>
-          <h1 className="text-3xl font-black text-white">Broadcast</h1>
-          <p className="text-[--text-secondary] font-medium mt-1">Send mass emails or in-app notifications</p>
-        </div>
+      <PageHeader title="Broadcast" description="Send mass emails or in-app notifications." />
+      <div className="flex flex-col gap-6">
 
         <div className="grid gap-8 lg:grid-cols-2">
           {/* Email Broadcast */}

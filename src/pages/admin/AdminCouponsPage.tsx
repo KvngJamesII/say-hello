@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { PageHeader } from '@/components/shared/PageHeader';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ConfirmModal } from '@/components/shared/ConfirmModal';
@@ -131,16 +132,16 @@ export const AdminCouponsPage: React.FC = () => {
 
   return (
     <DashboardLayout>
-      <div className="flex flex-col gap-8">
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-black text-white">Coupons</h1>
-            <p className="text-[--text-secondary] font-medium mt-1">Manage discount codes</p>
-          </div>
-          <Button onClick={() => setShowCreate(true)} className="h-11 px-6 text-white font-bold gap-2" style={{ background: '#F97316' }}>
-            <Plus size={18} />Create Coupon
+      <PageHeader
+        title="Coupons"
+        description="Manage discount codes."
+        actions={
+          <Button onClick={() => setShowCreate(true)} className="h-10 px-4 text-white font-bold gap-2" style={{ background: '#F97316' }}>
+            <Plus size={16} />Create Coupon
           </Button>
-        </div>
+        }
+      />
+      <div className="flex flex-col gap-6">
 
         <div className="bg-[--bg-secondary] rounded-2xl border border-[--border] overflow-hidden">
           <div className="hidden md:grid grid-cols-[1fr_80px_1fr_100px_120px_80px] gap-4 px-6 py-3 border-b border-[--border]">

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { PageHeader } from '@/components/shared/PageHeader';
 import { EmptyState } from '@/components/shared/EmptyState';
 import api from '@/lib/api';
 import { ShieldAlert, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
@@ -42,13 +43,11 @@ export const AdminAuditLogPage: React.FC = () => {
 
   return (
     <DashboardLayout>
-      <div className="flex flex-col gap-8">
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-black text-white">Audit Log</h1>
-            <p className="text-[--text-secondary] font-medium mt-1">All admin and system actions — auto-refreshes every 30s</p>
-          </div>
-        </div>
+      <PageHeader
+        title="Audit Log"
+        description="All admin and system actions — auto-refreshes every 30s."
+      />
+      <div className="flex flex-col gap-6">
 
         <div className="bg-[--bg-secondary] rounded-2xl border border-[--border] overflow-hidden">
           <div className="hidden md:grid grid-cols-[180px_1fr_1fr_120px_160px] gap-4 px-6 py-3 border-b border-[--border]">

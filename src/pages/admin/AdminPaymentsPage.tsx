@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { PageHeader } from '@/components/shared/PageHeader';
 import { EmptyState } from '@/components/shared/EmptyState';
 import api from '@/lib/api';
 import { CreditCard, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
@@ -54,11 +55,8 @@ export const AdminPaymentsPage: React.FC = () => {
 
   return (
     <DashboardLayout>
-      <div className="flex flex-col gap-8">
-        <div>
-          <h1 className="text-3xl font-black text-white">Payments</h1>
-          <p className="text-[--text-secondary] font-medium mt-1">All payment transactions</p>
-        </div>
+      <PageHeader title="Payments" description="All payment transactions." />
+      <div className="flex flex-col gap-6">
 
         {/* Summary cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
