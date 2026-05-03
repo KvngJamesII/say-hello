@@ -1,6 +1,7 @@
 import React from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { PageHeader } from '@/components/shared/PageHeader';
 import api from '@/lib/api';
 import { Loader2, Square, RefreshCw, Server } from 'lucide-react';
 import { toast } from 'sonner';
@@ -46,20 +47,18 @@ export const AdminContainersPage: React.FC = () => {
 
   return (
     <DashboardLayout>
-      <div className="flex flex-col gap-8">
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-black text-white">Containers</h1>
-            <p className="text-[--text-secondary] font-medium mt-1">
-              {containers.length} running container{containers.length !== 1 ? 's' : ''} — auto-refreshes every 10s
-            </p>
-          </div>
+      <PageHeader
+        title="Containers"
+        description={`${containers.length} running container${containers.length !== 1 ? 's' : ''} — auto-refreshes every 10s.`}
+        actions={
           <button onClick={() => qc.invalidateQueries({ queryKey: ['admin-containers'] })}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl border border-[--border] text-[--text-secondary] hover:bg-[--bg-tertiary] text-sm font-semibold transition-colors">
-            <RefreshCw size={14} />
+            className="flex items-center gap-2 h-9 px-3 rounded-lg border border-[--border] text-[--text-secondary] hover:bg-white/5 text-xs font-semibold transition-colors">
+            <RefreshCw size={13} />
             Refresh
           </button>
-        </div>
+        }
+      />
+      <div className="flex flex-col gap-6">
 
         {/* Stats bar */}
         <div className="grid grid-cols-3 gap-4">
